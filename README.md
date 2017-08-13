@@ -38,7 +38,7 @@ Functions::
 
 Constants::
 
-    TURE, FLASE(Type) represent universal set, empty set
+    TURE, FALSE(Type) represent universal set, empty set
 
 Grammar
 =========
