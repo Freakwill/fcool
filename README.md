@@ -72,8 +72,7 @@ Operators on Functions::
 
 Memoize::
 
-   # f is the object of BaseFunction
-   f.memoize()
+   f.memoize()    # f is the object of BaseFunction
    f.unmemoize()  # prohibit to use memo
    f.del_memo()   # just clear the memo
 
