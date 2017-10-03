@@ -1,6 +1,3 @@
-# fcool
-A cool tool for functional programming
-
 Introduction
 =============
 
@@ -18,7 +15,8 @@ Feature:
     2. operator on functions, for example, f + g: x -> f(x) + g(x) where f, g,  f+g are functions
     3. to glue functions with glue function or method that can be used to define piecewise functions
     4. no 3rd part requirement 
-    5. implement memoization in oo way. (new in this version)
+    5. implement memoization in oo way.
+    6. use MathFunction for math functions where keyword arguments are deprecated.  (new in this version)
 
 
 Content
@@ -72,9 +70,11 @@ Operators on Functions::
 
 Memoize::
 
+   
    f.memoize()    # f is the object of BaseFunction
-   f.unmemoize()  # prohibit to use memo
-   f.del_memo()   # just clear the memo
+   f.unmemoize()  # prohibit to use memo (memo is not deleted)
+   f.del_memo()   # just clear the memo, will update the memo in next time
+   f.forget()     # f.del_memo() and f.unmemoize()
 
 
 Advanced Grammar
