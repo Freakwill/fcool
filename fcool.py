@@ -1,62 +1,67 @@
 # -*- coding: utf-8 -*-
-# fcool: a cool tool for functional programming
-# Author: William Song
-#
-# CLasses:
-#     BaseFunction -> Type (or Domain), Function
-#     BaseFunction: func: function (or number)
-#     Function: func,
-#               domain: Type, the definition domain of func
-# Functions:
-#     Interval(a:num, b:num) -> Type
-#     restrict(t:Type) -> decorator(f:function -> Function(f, t))
-# Constants:
-#     TURE, FLASE(Type) represent universal set, empty set
-#
-# Example:
+'''fcool: a cool tool for functional programming
+Author: William Song
 
-#    t = Type(lambda x:x<5 and isinstance(x, int)) * TRUE  # define type(domain) and functions on it
-#        <=> Type(lambda x, y:x<5 and isinstance(x, int)) <=> Type(lambda x, y:x<5) & Type(int) * TRUE
-#    t1 = (Type(lambda x:x>=0)) * TRUE
-#    G = Function(lambda x,y: 2/x, t)
-#    F = Function(3, t1)
+Features:
+    Wrap functions, with domains (codomains)
+    Operation of functions
+    Memorizing easily
 
-#    print((F+F+F)(2,2), (3*F)(2,2), F.sum(F, F)(2,2))
-#    print(F(1,2))
+CLasses:
+    BaseFunction -> Type (or Domain), Function
+    BaseFunction: func: function (or number)
+    Function: func,
+              domain: Type, the definition domain of func
+Functions:
+    Interval(a:num, b:num) -> Type
+    restrict(t:Type) -> decorator(f:function -> Function(f, t))
+Constants:
+    TURE, FLASE(Type) represent universal set, empty set
 
-#    print(G.glue(F)(-3,4), glue(G,F)(3,4))
+Example:
 
-#    t = Type(int) & Type(lambda x:x<2)
-#    print(t(1)) # test
+   t = Type(lambda x:x<5 and isinstance(x, int)) * TRUE  # define type(domain) and functions on it
+       <=> Type(lambda x, y:x<5 and isinstance(x, int)) <=> Type(lambda x, y:x<5) & Type(int) * TRUE
+   t1 = (Type(lambda x:x>=0)) * TRUE
+   G = Function(lambda x,y: 2/x, t)
+   F = Function(3, t1)
 
-#    ID = Function.iden(Type(int))     # identity function on Z(int)
-#    print(ID.compose(F)(3,4))
+   print((F+F+F)(2,2), (3*F)(2,2), F.sum(F, F)(2,2))
+   print(F(1,2))
 
-#    @restrict(Interval(1,2))          # restricting decorator
-#    def f(x):
-#        return x
+   print(G.glue(F)(-3,4), glue(G,F)(3,4))
 
-#    print(f(1))
-#    try:
-#        print(f(3))
-#    except Exception as ex:
-#        print(ex)
+   t = Type(int) & Type(lambda x:x<2)
+   print(t(1)) # test
 
-#    @restrict()
-#    def g(x):
-#        return x
+   ID = Function.iden(Type(int))     # identity function on Z(int)
+   print(ID.compose(F)(3,4))
 
-#    print(g(3))
-#    g= g | Interval(1,2)            # restricting method
-#    try:
-#        print(g(3))
-#    except Exception as ex:
-#        print(ex)
+   @restrict(Interval(1,2))          # restricting decorator
+   def f(x):
+       return x
 
-#    print(g.array(g, g)(2))
-#    f=Function(lambda x:x+1)
-#    f.memoize()
-#    print(f(1))
+   print(f(1))
+   try:
+       print(f(3))
+   except Exception as ex:
+       print(ex)
+
+   @restrict()
+   def g(x):
+       return x
+
+   print(g(3))
+   g= g | Interval(1,2)            # restricting method
+   try:
+       print(g(3))
+   except Exception as ex:
+       print(ex)
+
+   print(g.array(g, g)(2))
+   f=Function(lambda x:x+1)
+   f.memoize()
+   print(f(1))'''
 
 import operator
 import functools
@@ -67,7 +72,9 @@ _FunctionType = (FunctionType, BuiltinFunctionType)
 
 
 def arity(func):
-    # return exact arity or (min, max)
+    '''return the exact arity of functions
+    func -> int or (min, max)
+    '''
     argspec = inspect.getargspec(func)
     narg = len(argspec.args)
     if argspec.defaults is None:
@@ -171,8 +178,8 @@ class Arithmetic(object):
 
 
 class BaseFunction(Arithmetic):
-    # function without domain
-    # func: function or number (regarded as constant function) or set (as characteristic function)
+    '''function without domain
+        func: function or number (regarded as constant function) or set (as characteristic function)'''
     def __init__(self, func):
         if isinstance(func, BaseFunction):   # deprecated
             self.func = func.func
@@ -186,7 +193,7 @@ class BaseFunction(Arithmetic):
         else:           # func is a number
             self.func = func
         # self.memoize()
-        self.memo = {}
+        self.__memo = {}
         self.call = self.__originalCall
 
     def copy(self):
@@ -196,28 +203,31 @@ class BaseFunction(Arithmetic):
         # select calling method
         self.call = MethodType(call, self)
 
-    def updata_memo(self, dict_):
-        self.memo.update(dict_)
+    def update_memo(self, dict_):
+        self.__memo.update(dict_)
 
     def del_memo(self):
-        self.memo = {}
+        self.__memo = {}
 
     def memoize(self):
         def call(obj, *args, **kwargs):
-            # obj: BaseFunction
+            # kwrags is ignored!
             if args in obj.memo:
                 return obj.memo[args]
             if isinstance(obj.func, _FunctionType):
                 val = obj.func(*args, **kwargs)
             else:            # func is a number
                 val = obj.func
-            obj.updata_memo({args: val})
+            obj.update_memo({args: val})
             return val
         self.select(call)
 
+    def unmemoize(self):
+        self.select(self.__originalCall)
+
     def forget(self):
         self.del_memo()
-        self.call = self.__originalCall
+        self.unmemoize()
 
     def __originalCall(self, *args, **kwargs):
         if isinstance(self.func, _FunctionType):
@@ -506,6 +516,7 @@ class Type(BaseFunction):
         return self
 
 class Domain(Type):
+    # alias for Type
     pass
 
 
@@ -733,7 +744,46 @@ def extend(f):
     return g
 
 
+class MathFunction(Function):
+    '''Function class only for math
+    unable to use keyword arguments
+    '''
+    def __init__(self, *args, **kwargs):
+        super(MathFunction, self).__init__(*args, **kwargs)
+
+    def memoize(self):
+        def call(obj, *args):
+            if args in obj.memo:
+                return obj.memo[args]
+            if isinstance(obj.func, _FunctionType):
+                val = obj.func(*args)
+            else:            # func is a number
+                val = obj.func
+            obj.update_memo({args: val})
+            return val
+        self.select(call)
+
+    def forget(self):
+        self.del_memo()
+        self.call = self.select(self.__originalCall, self)
+
+    def __originalCall(self, *args):
+        if isinstance(self.func, _FunctionType):
+            val = self.func(*args)
+        else:            # func is a number
+            val = self.func
+        return val
+
+
+    def __call__(self, *args):
+        # called as a function
+        return self.call(*args)
+        
+
+
+
 if __name__ == "__main__":
+    # test
 
     t = (Type(lambda x:x<0)) * TRUE    # define type(domain) and functions on it
     t1 = (Type(lambda x:x>=0)) * TRUE
