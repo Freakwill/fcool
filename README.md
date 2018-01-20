@@ -3,7 +3,7 @@ Introduction
 
 Abstract
 ----------
-A cool tool for functional programming. Operating Functions as in math. Type testing is implemented in an awsome way.
+A cool tool for functional programming. Operating Functions as in math. Type testing is implemented in an awsome way as well as memoizing.
 
 Keywords
 ----------
