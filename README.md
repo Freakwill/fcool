@@ -44,20 +44,26 @@ Grammar
 Basic grammar
 -------------
 
-import::
+import:
 
-    import fcool (or from fcool import *)
+```python
+import fcool (or from fcool import *)
+```
 
-Define Function with domain::
+Define Function with domain:
 
+```python
     F = Function(lambda x:x, Type(lambda x:x>2))
     F(3)
+```
 
-Operators on Functions::
+Operators on Functions:
 
+```python
     (F + F)(3)
     (F * F)(4)
     (2 * F)(3)
+```
 
 2D Functions and Types::
 
