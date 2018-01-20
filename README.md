@@ -22,19 +22,19 @@ Feature:
 Content
 =========
 
-Classes::
+Classes
 
     BaseFunction -> Type (or Domain), Function
     BaseFunction: func: function (or number)
     Function: func,
               domain: Type, the definition domain of func
 
-Functions::
+Functions
 
     Interval(a:num, b:num) -> Type
     restrict(t:Type) -> decorator(f:function -> Function(f, t))
 
-Constants::
+Constants
 
     TURE, FALSE(Type) represent universal set, empty set
 
@@ -76,7 +76,7 @@ Operators on Functions:
     F = Function(f, t)
 ```
 
-Memoize (the coolest feature of the new version):
+*Memoize (the coolest feature of the new version)*:
 
 ```python   
    f.memoize()    # f is the object of BaseFunction, similar to toolz.memoize(f)
