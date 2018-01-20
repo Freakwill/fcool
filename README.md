@@ -53,8 +53,8 @@ import fcool (or from fcool import *)
 Define Function with domain:
 
 ```python
-    F = Function(lambda x:x, Type(lambda x:x>2))
-    F(3)
+F = Function(lambda x:x, Type(lambda x:x>2))
+F(3)
 ```
 
 Operators on Functions:
@@ -65,36 +65,40 @@ Operators on Functions:
     (2 * F)(3)
 ```
 
-2D Functions and Types::
+2D Functions and Types:
 
+```python
     f = 3     # or lambda x,y: 3
     g = lambda x,y: 2/x
     t = Type(lambda x:x<5 and isinstance(x, int)) * TRUE  # define type(domain) and functions on it
         <=> Type(lambda x, y:x<5) & Type(lambda x, y:isinstance(x, int))
     G = Function(g, t)
     F = Function(f, t)
+```
 
-Memoize::
+Memoize (the coolest feature of the new version):
 
-   
-   f.memoize()    # f is the object of BaseFunction
-   f.unmemoize()  # prohibit to use memo (memo is not deleted)
+```python   
+   f.memoize()    # f is the object of BaseFunction, similar to toolz.memoize(f)
+   f.unmemoize()  # prohibit to use memo (memo is not deleted)
    f.del_memo()   # just clear the memo, will update the memo in next time
    f.forget()     # f.del_memo() and f.unmemoize()
-
+```
 
 Advanced Grammar
 ----------------
 
-Glue Functions::
+Glue Functions:
 
-    print(G.glue(F)(3,4), glue(G, F)(3,4))    # glue functions
+```python    print(G.glue(F)(3,4), glue(G, F)(3,4))    # glue functions
 
     ID = Function(lambda x:x)
     print(ID.compose(F)(3,4))      # composition
+```
 
-Type testing with restrict decorator::
+Type testing with restrict decorator:
 
+```python
     @restrict(Interval(1,2))       # restriction decorator
     def f(x):
         return x
@@ -109,3 +113,4 @@ Type testing with restrict decorator::
     print(G(3))
     G = G | Interval(1,2)           # restriction method   
     print(G(3))
+```
